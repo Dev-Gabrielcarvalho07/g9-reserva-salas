@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: g9-reserva-salas
+
+  datasource:
+    # Backend NUNCA fala direto com o Postgres: passa pelo PgBouncer (porta 6432)
+    # prepareThreshold=0 -> prepared statements "sem nome", compatíveis com pool_mode=transaction
+    url: ${DB_URL:jdbc:postgresql://pgbouncer:6432/g9_reservas?prepareThreshold=0&ApplicationName=g9-backend}
+    username: ${DB_USER:app_user}
+    password: ${DB_PASSWORD:App@G9_2026}
+
+    # ---------- Tuning do pool HikariCP ----------
+    hikari:
+      pool-name: G9HikariPool
+      maximum-pool-size: 10        # <= default_pool_size do PgBouncer
+      minimum-idle: 2
+      connection-timeout: 5000     # espera no máx. 5s por uma conexão livre
+      idle-timeout: 120000         # fecha conexão ociosa do pool após 2 min
+      max-lifetime: 900000         # recicla conexões a cada 15 min
+      validation-timeout: 3000
+
+  jackson:
+    time-zone: America/Sao_Paulo
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none               # a estrutura vem do backup.sql, o Hibernate não cria nada
+    properties:
+      hibernate:
+        format_sql: false
+    show-sql: false
+
+logging:
+  level:
+    com.zaxxer.hikari: INFO
+    br.com.g9: INFO

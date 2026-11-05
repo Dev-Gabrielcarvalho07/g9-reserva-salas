@@ -1,0 +1,30 @@
+# Dados físicos do PostgreSQL (NUNCA versionar)
+pgdata/
+data/
+postgres-data/
+**/var/lib/postgresql/
+
+# Java / Maven
+backend/target/
+*.class
+*.jar
+*.log
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Variáveis locais
+.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/

@@ -1,0 +1,3 @@
+"app_user" "App@G9_2026"
+"relatorio_user" "Relatorio@G9_2026"
+"pgbouncer_admin" "Admin@Pool_2026"

@@ -1,0 +1,121 @@
+:root {
+  --fundo: #f4f6fa;
+  --card: #ffffff;
+  --borda: #e2e6ee;
+  --texto: #1d2433;
+  --suave: #687089;
+  --primaria: #2f5bea;
+  --primaria-escura: #2349c4;
+  --verde: #1f9d55;
+  --vermelho: #d64545;
+  --amarelo: #c98a05;
+  --cinza: #8a93a6;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--texto);
+  background: var(--fundo);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fundo); }
+h1, h2, h3 { margin: 0; }
+h2 small, h3 small { font-weight: 400; color: var(--suave); font-size: 0.75rem; margin-left: 8px; }
+code { background: #eef1f7; padding: 1px 6px; border-radius: 4px; font-size: 0.85em; }
+
+/* ---------- Layout ---------- */
+.topo {
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  padding: 12px 24px; background: var(--card); border-bottom: 1px solid var(--borda);
+}
+.marca { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.logo {
+  background: var(--primaria); color: #fff; font-weight: 700;
+  padding: 4px 8px; border-radius: 6px; font-size: 0.9rem;
+}
+.logo.grande { font-size: 1.4rem; padding: 8px 14px; align-self: center; }
+.abas { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+.abas button { background: transparent; color: var(--suave); }
+.abas button.ativa { background: #e8eefe; color: var(--primaria); }
+.usuario { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; }
+.usuario small { color: var(--suave); }
+
+.conteudo { max-width: 1200px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 20px; }
+.titulo-pagina { display: flex; justify-content: space-between; align-items: center; }
+section { display: flex; flex-direction: column; gap: 12px; }
+
+.card { background: var(--card); border: 1px solid var(--borda); border-radius: 10px; padding: 16px; }
+
+/* ---------- Formulários ---------- */
+button {
+  font: inherit; border: none; border-radius: 6px; padding: 8px 14px; cursor: pointer;
+  background: var(--primaria); color: #fff; font-weight: 500;
+}
+button:hover { background: var(--primaria-escura); }
+button:disabled { opacity: 0.6; cursor: wait; }
+button.secundario { background: #eef1f7; color: var(--texto); }
+button.secundario:hover { background: #e2e6ee; }
+button.perigo { background: #fdeaea; color: var(--vermelho); }
+button.perigo:hover { background: #f9d5d5; }
+
+label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--suave); flex: 1; min-width: 160px; }
+label.check { flex-direction: row; align-items: center; gap: 8px; flex: 0; min-width: auto; color: var(--texto); }
+input, select {
+  font: inherit; padding: 8px 10px; border: 1px solid var(--borda); border-radius: 6px;
+  background: #fff; color: var(--texto);
+}
+input:focus, select:focus { outline: 2px solid #c7d4fb; border-color: var(--primaria); }
+
+.formulario { display: flex; flex-direction: column; gap: 14px; }
+.linha { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.acoes { display: flex; gap: 8px; }
+.disp { flex: 1; min-width: 160px; padding-bottom: 8px; }
+
+/* ---------- Tabelas ---------- */
+table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borda); font-size: 0.9rem; vertical-align: middle; }
+th { background: #f8f9fc; color: var(--suave); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
+tr:last-child td { border-bottom: none; }
+tr.apagada td { color: var(--cinza); }
+.acoes-linha { text-align: right; white-space: nowrap; }
+.acoes-linha button { padding: 5px 10px; font-size: 0.8rem; margin-left: 6px; }
+.vazio { text-align: center; color: var(--suave); padding: 24px; }
+
+/* ---------- Selos, chips, alertas ---------- */
+.selo { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.selo.verde { background: #e3f6ec; color: var(--verde); }
+.selo.vermelho { background: #fdeaea; color: var(--vermelho); }
+.selo.amarelo { background: #fdf3dc; color: var(--amarelo); }
+.selo.cinza { background: #eef1f7; color: var(--cinza); }
+
+.chip { display: inline-flex; align-items: center; gap: 4px; background: #eef1f7; border-radius: 999px; padding: 2px 4px 2px 10px; margin: 2px; font-size: 0.8rem; }
+.chip .x { background: transparent; color: var(--suave); padding: 0 6px; font-size: 1rem; line-height: 1; }
+.chip .x:hover { color: var(--vermelho); background: transparent; }
+
+.alerta { padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; }
+.alerta.erro { background: #fdeaea; color: #a32f2f; }
+.alerta.sucesso { background: #e3f6ec; color: #17733f; }
+.alerta.info { background: #e8eefe; color: var(--primaria-escura); }
+
+/* ---------- Painel ---------- */
+.grade-salas { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.sala { display: flex; flex-direction: column; gap: 6px; border-left: 4px solid var(--verde); }
+.sala.ocupada { border-left-color: var(--vermelho); }
+.sala-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.detalhe { color: var(--suave); font-size: 0.85rem; }
+.demo { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.demo p { margin: 0; color: var(--suave); }
+
+/* ---------- Auditoria ---------- */
+.detalhe-log td { background: #f8f9fc; }
+.json-lado { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.json-lado pre { background: #fff; border: 1px solid var(--borda); border-radius: 6px; padding: 10px; font-size: 0.75rem; overflow: auto; max-height: 260px; margin: 6px 0 0; }
+
+/* ---------- Login ---------- */
+.tela-login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.login { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 14px; padding: 28px; }
+.login h1 { text-align: center; font-size: 1.3rem; }
+.login .sub { text-align: center; margin: -8px 0 4px; color: var(--suave); font-size: 0.9rem; }
+
+@media (max-width: 720px) {
+  table { display: block; overflow-x: auto; }
+  .json-lado { grid-template-columns: 1fr; }
+}

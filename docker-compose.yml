@@ -1,0 +1,91 @@
+name: g9-reserva-salas
+
+services:
+  # ------------------------------------------------------------------
+  # Banco de dados
+  # ------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: g9-db
+    environment:
+      POSTGRES_DB: g9_reservas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Postgres@G9_2026
+      TZ: America/Sao_Paulo
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c hba_file=/etc/postgresql/pg_hba.conf
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./bd/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./bd/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./bd/backup.sql:/docker-entrypoint-initdb.d/01-backup.sql:ro
+    # sem "ports": o banco NÃO fica exposto no host, só na rede interna
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d g9_reservas"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      g9_net:
+        ipv4_address: 172.28.0.10
+
+  # ------------------------------------------------------------------
+  # Pool de conexões
+  # ------------------------------------------------------------------
+  pgbouncer:
+    build: ./pgbouncer
+    container_name: g9-pgbouncer
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      g9_net:
+        ipv4_address: 172.28.0.20
+
+  # ------------------------------------------------------------------
+  # API REST (Spring Boot)
+  # ------------------------------------------------------------------
+  backend:
+    build: ./backend
+    container_name: g9-backend
+    depends_on:
+      - pgbouncer
+    environment:
+      DB_URL: jdbc:postgresql://pgbouncer:6432/g9_reservas?prepareThreshold=0&ApplicationName=g9-backend
+      DB_USER: app_user
+      DB_PASSWORD: App@G9_2026
+      TZ: America/Sao_Paulo
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    networks:
+      g9_net:
+        ipv4_address: 172.28.0.30
+
+  # ------------------------------------------------------------------
+  # SPA React servida pelo Nginx (proxy /api -> backend)
+  # ------------------------------------------------------------------
+  frontend:
+    build: ./frontend
+    container_name: g9-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    networks:
+      g9_net:
+        ipv4_address: 172.28.0.40
+
+volumes:
+  pgdata:
+
+networks:
+  g9_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
