@@ -153,6 +153,11 @@ BEGIN
               USING ERRCODE = 'check_violation';
     END IF;
 
+    IF p_inicio < now()::timestamp THEN
+        RAISE EXCEPTION 'Não é possível reservar um horário no passado'
+              USING ERRCODE = 'check_violation';
+    END IF;
+
     -- LOCK pessimista na linha da sala
     SELECT s.ativa INTO v_ativa
       FROM reserva.sala s
@@ -193,6 +198,15 @@ AS $$
 BEGIN
     -- Mesmo lock da procedure: garante fila por sala em QUALQUER caminho de escrita
     PERFORM 1 FROM reserva.sala WHERE id = NEW.sala_id FOR UPDATE;
+
+    -- Na edição, não deixa mover a reserva para o passado
+    -- (no INSERT a regra fica na procedure, para os seeds poderem ter reservas de hoje cedo)
+    IF TG_OP = 'UPDATE'
+       AND (NEW.inicio IS DISTINCT FROM OLD.inicio OR NEW.fim IS DISTINCT FROM OLD.fim)
+       AND NEW.inicio < now()::timestamp THEN
+        RAISE EXCEPTION 'Não é possível mover a reserva para um horário no passado'
+              USING ERRCODE = 'check_violation';
+    END IF;
 
     IF NEW.status = 'ATIVA'
        AND NOT reserva.fn_sala_disponivel(NEW.sala_id, NEW.inicio, NEW.fim, NEW.id) THEN
@@ -238,6 +252,10 @@ FOR EACH ROW EXECUTE FUNCTION audit.fn_registrar_auditoria();
 
 CREATE TRIGGER trg_audit_sala
 AFTER INSERT OR UPDATE OR DELETE ON reserva.sala
+FOR EACH ROW EXECUTE FUNCTION audit.fn_registrar_auditoria();
+
+CREATE TRIGGER trg_audit_recurso
+AFTER INSERT OR UPDATE OR DELETE ON reserva.recurso
 FOR EACH ROW EXECUTE FUNCTION audit.fn_registrar_auditoria();
 
 -- ---------------------------------------------------------------------

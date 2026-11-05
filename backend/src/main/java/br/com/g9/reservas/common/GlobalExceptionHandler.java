@@ -46,7 +46,8 @@ public class GlobalExceptionHandler {
         String msgBanco = (server != null && server.getMessage() != null) ? server.getMessage() : psql.getMessage();
 
         return switch (sqlState) {
-            case "23P01", "23514" -> erro(HttpStatus.CONFLICT, msgBanco);   // RAISE da procedure/trigger
+            case "23P01" -> erro(HttpStatus.CONFLICT, msgBanco);      // choque de horário (conflito real)
+            case "23514" -> erro(HttpStatus.BAD_REQUEST, msgBanco);   // regra violada: fim < início, passado, sala inativa
             case "P0002" -> erro(HttpStatus.NOT_FOUND, msgBanco);
             case "23503" -> erro(HttpStatus.CONFLICT, "Registro em uso por outros dados (chave estrangeira)");
             case "23505" -> erro(HttpStatus.CONFLICT, "Já existe um registro com esse valor");

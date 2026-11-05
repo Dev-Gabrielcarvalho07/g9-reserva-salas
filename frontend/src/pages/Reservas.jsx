@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
 import { api, formatarData } from '../api.js';
+import BotaoConfirmar from '../components/BotaoConfirmar.jsx';
+
+// valor mínimo do datetime-local: agora, no horário local
+function agoraLocal() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
 
 const VAZIO = { salaId: '', titulo: '', responsavel: '', inicio: '', fim: '' };
 
@@ -26,8 +34,10 @@ export default function Reservas() {
   // Consulta a FUNCTION fn_sala_disponivel sempre que sala/período mudam
   useEffect(() => {
     setDisponivel(null);
-    if (!form.salaId || !form.inicio || !form.fim || editandoId) return;
-    const q = new URLSearchParams({ salaId: form.salaId, inicio: form.inicio, fim: form.fim });
+    if (!form.salaId || !form.inicio || !form.fim) return;
+    const params = { salaId: form.salaId, inicio: form.inicio, fim: form.fim };
+    if (editandoId) params.ignorarId = editandoId;   // na edição, a própria reserva não conta
+    const q = new URLSearchParams(params);
     api(`/relatorios/disponibilidade?${q}`).then((r) => setDisponivel(r.disponivel)).catch(() => {});
   }, [form.salaId, form.inicio, form.fim, editandoId]);
 
@@ -39,10 +49,10 @@ export default function Reservas() {
     try {
       if (editandoId) {
         await api(`/reservas/${editandoId}`, { method: 'PUT', body });
-        setMsg({ tipo: 'sucesso', texto: 'Reserva atualizada (validada pelo trigger)' });
+        setMsg({ tipo: 'sucesso', texto: 'Reserva atualizada com sucesso' });
       } else {
         await api('/reservas', { method: 'POST', body });
-        setMsg({ tipo: 'sucesso', texto: 'Reserva criada pela procedure sp_reservar_sala' });
+        setMsg({ tipo: 'sucesso', texto: 'Reserva criada com sucesso' });
       }
       limpar();
       carregar();
@@ -78,7 +88,6 @@ export default function Reservas() {
   }
 
   async function excluir(r) {
-    if (!window.confirm(`Excluir a reserva "${r.titulo}"?`)) return;
     try {
       await api(`/reservas/${r.id}`, { method: 'DELETE' });
       setMsg({ tipo: 'sucesso', texto: 'Reserva excluída' });
@@ -113,10 +122,10 @@ export default function Reservas() {
         </div>
         <div className="linha">
           <label>Início
-            <input type="datetime-local" value={form.inicio} onChange={(e) => setForm({ ...form, inicio: e.target.value })} required />
+            <input type="datetime-local" min={editandoId ? undefined : agoraLocal()} value={form.inicio} onChange={(e) => setForm({ ...form, inicio: e.target.value })} required />
           </label>
           <label>Fim
-            <input type="datetime-local" value={form.fim} onChange={(e) => setForm({ ...form, fim: e.target.value })} required />
+            <input type="datetime-local" min={form.inicio || undefined} value={form.fim} onChange={(e) => setForm({ ...form, fim: e.target.value })} required />
           </label>
           <div className="disp">
             {disponivel === true && <span className="selo verde">Sala livre nesse horário</span>}
@@ -150,7 +159,7 @@ export default function Reservas() {
                     <button className="secundario" onClick={() => cancelarReserva(r)}>Cancelar</button>
                   </>
                 )}
-                <button className="perigo" onClick={() => excluir(r)}>Excluir</button>
+                <BotaoConfirmar onConfirmar={() => excluir(r)} />
               </td>
             </tr>
           ))}

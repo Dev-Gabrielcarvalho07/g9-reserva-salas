@@ -119,3 +119,5 @@ tr.apagada td { color: var(--cinza); }
   table { display: block; overflow-x: auto; }
   .json-lado { grid-template-columns: 1fr; }
 }
+button.perigo-forte { background: var(--vermelho); color: #fff; }
+button.perigo-forte:hover { background: #b83434; }

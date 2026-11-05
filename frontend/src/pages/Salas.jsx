@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api.js';
+import BotaoConfirmar from '../components/BotaoConfirmar.jsx';
 
 const VAZIO = { nome: '', capacidade: '', localizacao: '', ativa: true };
 
@@ -52,7 +53,6 @@ export default function Salas() {
   }
 
   async function excluir(s) {
-    if (!window.confirm(`Excluir a sala "${s.nome}"?`)) return;
     try {
       await api(`/salas/${s.id}`, { method: 'DELETE' });
       setMsg({ tipo: 'sucesso', texto: 'Sala excluída' });
@@ -135,7 +135,7 @@ export default function Salas() {
               <td><span className={`selo ${s.ativa ? 'verde' : 'cinza'}`}>{s.ativa ? 'Ativa' : 'Inativa'}</span></td>
               <td className="acoes-linha">
                 <button className="secundario" onClick={() => editar(s)}>Editar</button>
-                <button className="perigo" onClick={() => excluir(s)}>Excluir</button>
+                <BotaoConfirmar onConfirmar={() => excluir(s)} />
               </td>
             </tr>
           ))}

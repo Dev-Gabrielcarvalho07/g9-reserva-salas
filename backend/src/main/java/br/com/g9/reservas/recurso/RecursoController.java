@@ -1,5 +1,6 @@
 package br.com.g9.reservas.recurso;
 
+import br.com.g9.reservas.common.AuditoriaSupport;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,9 +23,11 @@ public class RecursoController {
     }
 
     private final RecursoRepository repository;
+    private final AuditoriaSupport auditoria;
 
-    public RecursoController(RecursoRepository repository) {
+    public RecursoController(RecursoRepository repository, AuditoriaSupport auditoria) {
         this.repository = repository;
+        this.auditoria = auditoria;
     }
 
     @GetMapping
@@ -38,6 +41,7 @@ public class RecursoController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public Recurso criar(@RequestBody @Valid RecursoRequest req) {
+        auditoria.marcarOperador();
         Recurso r = new Recurso();
         r.setSalaId(req.salaId());
         r.setNome(req.nome());
@@ -48,7 +52,9 @@ public class RecursoController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        auditoria.marcarOperador();
         repository.deleteById(id);
+        repository.flush();
         return ResponseEntity.noContent().build();
     }
 }

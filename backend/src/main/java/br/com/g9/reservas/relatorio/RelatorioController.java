@@ -39,9 +39,12 @@ public class RelatorioController {
     public Map<String, Object> disponibilidade(
             @RequestParam Long salaId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim,
+            @RequestParam(required = false) Long ignorarId) {
+        // ignorarId: na edição, a própria reserva não conta como conflito
         Boolean livre = jdbc.queryForObject(
-                "SELECT reserva.fn_sala_disponivel(?, ?, ?)", Boolean.class, salaId, inicio, fim);
+                "SELECT reserva.fn_sala_disponivel(?, ?, ?, ?::bigint)", Boolean.class,
+                salaId, inicio, fim, ignorarId);
         return Map.of("salaId", salaId, "disponivel", Boolean.TRUE.equals(livre));
     }
 
