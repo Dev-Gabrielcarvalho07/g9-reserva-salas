@@ -146,4 +146,6 @@ Principais demonstrações: permissões por role, pgcrypto, function, views, tri
 ## Equipe
 
 - Gabriel Carvalho de Oliveira
-- _(adicionar integrantes)_
+- João Pedro Abdala
+- Maria Eduarda
+- Yan Santos_
