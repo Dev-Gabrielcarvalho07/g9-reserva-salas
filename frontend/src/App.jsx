@@ -53,7 +53,7 @@ export default function App() {
           <button className="secundario" onClick={logout}>Sair</button>
         </div>
       </header>
-      <main className="conteudo">
+      <main className="conteudo" key={aba}>
         <Atual />
       </main>
     </div>

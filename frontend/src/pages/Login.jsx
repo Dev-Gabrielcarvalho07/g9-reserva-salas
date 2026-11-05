@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { api, salvarSessao } from '../api.js';
+import ParticulasFundo from '../components/ParticulasFundo.jsx';
 
 export default function Login({ onLogin }) {
   const [login, setLogin] = useState('');
@@ -24,16 +25,17 @@ export default function Login({ onLogin }) {
 
   return (
     <div className="tela-login">
-      <form className="card login" onSubmit={entrar}>
+      <ParticulasFundo />
+      <form className="login-vidro" onSubmit={entrar}>
         <span className="logo grande">G9</span>
         <h1>Reserva de Salas</h1>
         <p className="sub">Acesso restrito a operadores</p>
 
         <label>Login
-          <input value={login} onChange={(e) => setLogin(e.target.value)} autoFocus required />
+          <input value={login} onChange={(e) => setLogin(e.target.value)} autoFocus required autoComplete="username" />
         </label>
         <label>Senha
-          <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
+          <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required autoComplete="current-password" />
         </label>
 
         {erro && <div className="alerta erro">{erro}</div>}
